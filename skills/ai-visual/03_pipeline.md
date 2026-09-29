@@ -5,7 +5,7 @@ End-to-end воркфлоу визуальной кампании. Роли: **�
 ## Этапы
 
 1. **Концепт + каденс-грамматика.** Зафиксировать мотив, мир (напр. брутализм/бетон), список лук/кадров и кат-лист (ритм). Референс-кампанию можно разобрать на каденс. Хранить в `<campaign>/PROGRESS.md` (живое состояние, кат-лист, инвентарь) + `RUN.md` (launch-файл сессии).
-2. **Первые кадры (я).** По `01_prompt-craft.md` + `02_higgsfield-routing.md`. Пошагово, self-QC через Read, принимать каждый. Скачивание -> `~/Downloads/` (staging), **принятый кадр сразу копировать в `<campaign>/firstframes/`** (постоянное хранилище - пользователь чистит Downloads/Корзину, кадры пропадают), инвентарь -> `firstframes/MANIFEST.md`.
+2. **Первые кадры (я).** По `01_prompt-craft.md` + `02_higgsfield-routing.md`. Пошагово, self-QC через Read, принимать каждый. Скачивание -> `cli.js grab <url>` в `<campaign>/inbox/` (транзит, ~/Downloads не используем), **принятый кадр сразу `cli.js accept ... --shot <id>` в `<campaign>/firstframes/`** (постоянное хранилище), инвентарь -> `firstframes/MANIFEST.md`.
 3. **i2v-промпты.** skill `seedance` + `00_seedance-rules.md` + модули (НЕ по памяти). Писать в `<campaign>/seedance-prompts.md`: `Starting from the provided first frame, hold that exact composition and framing, do not reframe or crop.`, aspect = формат кампании (из опросника), аудио OFF, камера обычно locked (двигается субъект/материал). Face-lock (3 constraint-блока) только на кадрах с лицом. Имена стиллов под каждым клипом держать в актуальном состоянии.
 4. **Генерация видео (я).** Гоню сам через `higgsfield generate create <video_model>` с принятым кадром как `--start-image`, результат забираю `cli.js grab` в `<campaign>/inbox/`. Модель выбираю по бюджету (`02_higgsfield-routing.md` -> «Видео: цена вопроса»): черновая проверка движения - дешёвой моделью, финал - Seedance 2.0. Перед каждым прогоном сверяюсь с балансом (`higgsfield account status`).
 5. **Монтаж (я).** skill `palmier-edit` - импорт клипов, сборка по каденс-грид, диссолвы/склейки, исходный звук в ноль, холст по формату.
@@ -31,7 +31,7 @@ End-to-end воркфлоу визуальной кампании. Роли: **�
   videos/             - принятые i2v-клипы (<shotId>.mp4)
   firstframes/
     MANIFEST.md       - инвентарь принятых кадров
-    *.png             - КОПИИ принятых кадров (постоянное хранилище; Downloads - staging)
+    *.png             - КОПИИ принятых кадров (постоянное хранилище; `inbox/` - транзит)
 ```
 
 **Сториборд-приложение:** `<ai-visual-root>/tools/storyboard/` (`node server.js` -> http://127.0.0.1:4646) - живой сториборд по `storyboard.json` (SSE). Статус-пайплайн кадра: `frame-todo -> frame-review -> prompt-todo -> prompt-ready -> video-queued -> video-generating -> video-review -> video-approved -> uploaded`. Я веду статусы в json; пользователь оценивает в UI. Генерация видео - через Higgsfield CLI (`higgsfield generate create <video_model> --start-image <кадр>`, см. `02_higgsfield-routing.md`), клипы -> `videos/`; одобренные - в Palmier через MCP `import_media`.

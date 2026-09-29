@@ -21,7 +21,7 @@ CLI: `higgsfield`, тариф ultra. Полная механика CLI/ката�
 - Soul-персонаж (если нужен фикс-герой): `--custom_reference_id <soul_ref_id>` / `--soul-id` (см. `higgsfield soul-id list`).
 
 Пример детали-кропа (`<AR>` = формат кампании):
-`higgsfield generate create nano_banana_2 --aspect_ratio <AR> --resolution 2k --image ~/Downloads/<couture-still>.png --wait --prompt "<рецепт детали из 01_prompt-craft>"`
+`higgsfield generate create nano_banana_2 --aspect_ratio <AR> --resolution 2k --image <campaign>/firstframes/<couture-still>.png --wait --prompt "<рецепт детали из 01_prompt-craft>"`
 
 ## Рефы - критично
 
@@ -40,7 +40,7 @@ CLI: `higgsfield`, тариф ultra. Полная механика CLI/ката�
 ## Рабочий цикл одного кадра
 
 1. Сгенерил с `--wait` -> получил URL.
-2. `curl -s -o ~/Downloads/<имя>.png "<URL>"`.
+2. `node <ai-visual-root>/tools/storyboard/cli.js grab "<URL>" --as <имя>` (файл падает в `<campaign>/inbox/`).
 3. **Read** файла - сам оцени: стиль/грейд, реализм (не пластик), нет ли лишнего лица/NSFW-силуэта, композиция.
 4. Принял/перегнал. Перегон - менять 1-2 фактора, не весь промпт.
 5. Имена: `sn_<n>_<material>.png` (soul) / `nb*_<...>.png` (nano banana) - чтобы версии не путались.
@@ -50,7 +50,7 @@ CLI: `higgsfield`, тариф ultra. Полная механика CLI/ката�
 - HTTP **502** - транзиент, просто повторить ту же команду.
 - `Missing required params: prompt` - добавить `--prompt`.
 - `status "nsfw"` - переформатировать (см. выше), не долбить тем же промптом.
-- **Долгая джоба ушла в фон** - ждать task-notification, потом забрать URL из output-файла и `curl` в Downloads. НЕ считать кадр «на проверке», пока файл реально не скачан и не просмотрен Read-ом (иначе «v4 на проверке» оказывается несуществующим файлом).
+- **Долгая джоба ушла в фон** - ждать task-notification, потом забрать URL из output-файла и `cli.js grab` в `<campaign>/inbox/`. НЕ считать кадр «на проверке», пока файл реально не скачан и не просмотрен Read-ом (иначе «v4 на проверке» оказывается несуществующим файлом).
 - **Bash с длинным `--prompt`** - одной строкой, без переносов и вложенных двойных кавычек (`parse error near '\n'`); длинный промпт - через файл + `--prompt "$(cat <файл>)"`. Malformed tool-call - чисто переотправить один раз (см. harness в `CLAUDE.md` проекта).
 
 ---
