@@ -6,8 +6,8 @@ End-to-end воркфлоу визуальной кампании. Роли: **�
 
 1. **Концепт + каденс-грамматика.** Зафиксировать мотив, мир (напр. брутализм/бетон), список лук/кадров и кат-лист (ритм). Референс-кампанию можно разобрать на каденс. Хранить в `<campaign>/PROGRESS.md` (живое состояние, кат-лист, инвентарь) + `RUN.md` (launch-файл сессии).
 2. **Первые кадры (я).** По `01_prompt-craft.md` + `02_higgsfield-routing.md`. Пошагово, self-QC через Read, принимать каждый. Скачивание -> `~/Downloads/` (staging), **принятый кадр сразу копировать в `<campaign>/firstframes/`** (постоянное хранилище - пользователь чистит Downloads/Корзину, кадры пропадают), инвентарь -> `firstframes/MANIFEST.md`.
-3. **i2v-промпты.** skill `seedance` + `00_seedance-rules.md` + модули (НЕ по памяти). Писать в `<campaign>/seedance-prompts.md`: `@image1 as the first frame...`, aspect = формат кампании (из опросника), аудио OFF, камера обычно locked (двигается субъект/материал). Face-lock (3 constraint-блока) только на кадрах с лицом. Имена стиллов под каждым клипом держать в актуальном состоянии.
-4. **Генерация видео (я).** Гоню сам через `higgsfield generate create <video_model>` с принятым кадром как `--image`/`--medias`, результат забираю `cli.js grab` в `<campaign>/inbox/`. Модель выбираю по бюджету (`02_higgsfield-routing.md` -> «Видео: цена вопроса»): черновая проверка движения - дешёвой моделью, финал - Seedance 2.0. Перед каждым прогоном сверяюсь с балансом (`higgsfield account status`).
+3. **i2v-промпты.** skill `seedance` + `00_seedance-rules.md` + модули (НЕ по памяти). Писать в `<campaign>/seedance-prompts.md`: `Starting from the provided first frame, hold that exact composition and framing, do not reframe or crop.`, aspect = формат кампании (из опросника), аудио OFF, камера обычно locked (двигается субъект/материал). Face-lock (3 constraint-блока) только на кадрах с лицом. Имена стиллов под каждым клипом держать в актуальном состоянии.
+4. **Генерация видео (я).** Гоню сам через `higgsfield generate create <video_model>` с принятым кадром как `--start-image`, результат забираю `cli.js grab` в `<campaign>/inbox/`. Модель выбираю по бюджету (`02_higgsfield-routing.md` -> «Видео: цена вопроса»): черновая проверка движения - дешёвой моделью, финал - Seedance 2.0. Перед каждым прогоном сверяюсь с балансом (`higgsfield account status`).
 5. **Монтаж (я).** skill `palmier-edit` - импорт клипов, сборка по каденс-грид, диссолвы/склейки, исходный звук в ноль, холст по формату.
 
 ## Harness (повтор, жёстко)
@@ -34,7 +34,7 @@ End-to-end воркфлоу визуальной кампании. Роли: **�
     *.png             - КОПИИ принятых кадров (постоянное хранилище; Downloads - staging)
 ```
 
-**Сториборд-приложение:** `<ai-visual-root>/tools/storyboard/` (`node server.js` -> http://127.0.0.1:4646) - живой сториборд по `storyboard.json` (SSE). Статус-пайплайн кадра: `frame-todo -> frame-review -> prompt-todo -> prompt-ready -> video-queued -> video-generating -> video-review -> video-approved -> uploaded`. Я веду статусы в json; пользователь оценивает в UI. Генерация видео - через Higgsfield CLI (`higgsfield generate create <video_model> --image <кадр>`, см. `02_higgsfield-routing.md`), клипы -> `videos/`; одобренные - в Palmier через MCP `import_media`.
+**Сториборд-приложение:** `<ai-visual-root>/tools/storyboard/` (`node server.js` -> http://127.0.0.1:4646) - живой сториборд по `storyboard.json` (SSE). Статус-пайплайн кадра: `frame-todo -> frame-review -> prompt-todo -> prompt-ready -> video-queued -> video-generating -> video-review -> video-approved -> uploaded`. Я веду статусы в json; пользователь оценивает в UI. Генерация видео - через Higgsfield CLI (`higgsfield generate create <video_model> --start-image <кадр>`, см. `02_higgsfield-routing.md`), клипы -> `videos/`; одобренные - в Palmier через MCP `import_media`.
 
 **Поле `light` у шота** - световая карточка сцены (см. Континуити п.2), строка формата `источник · направление+высота · температура/грейд · контраст`. Заполняется до генерации первого кадра сцены и копируется всем шотам той же сцены без изменений. Патчится так же, как остальные поля:
 
@@ -87,7 +87,7 @@ node <ai-visual-root>/tools/storyboard/cli.js set <shotId> --light "available da
 
 **Роль кадра - старт или финал - решается для КАЖДОГО кадра отдельно.** Общего правила вида «станции всегда финал, проходки всегда старт» нет и не заводить: пользователь отказался от такого обобщения. Спрашивать или предлагать под конкретный кадр.
 
-- кадр как СТАРТ (`--image`): движение уходит из утверждённой композиции;
+- кадр как СТАРТ (`--start-image`): движение уходит из утверждённой композиции;
 - кадр как ФИНАЛ (`--end-image`): движение приходит в утверждённую композицию и замирает в ней. Работает на `seedance_2_0`, проверено. В промпте роль назвать дословно: `The provided image is the FINAL frame of this shot: the movement resolves exactly into that composition and the last frame matches it precisely.`
 
 **Уроки по движению (оба выстраданы на браке):**
