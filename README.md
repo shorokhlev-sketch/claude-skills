@@ -86,20 +86,28 @@ cp -R claude-skills/skills/* ~/.claude/skills/
 cp claude-skills/harness/LOOP-TEMPLATE.md claude-skills/harness/AGENT-BRIEF-TEMPLATE.md ~/.claude/skills/orchestrator-loop/
 ```
 
-Install the hooks, then merge `hooks/settings.example.json` into `~/.claude/settings.json` (both need `jq`):
+Install the hooks (both need `jq`):
 
 ```sh
 mkdir -p ~/.claude/hooks
 cp claude-skills/hooks/*.sh ~/.claude/hooks/
 ```
 
+Merge `hooks/settings.example.json` into `~/.claude/settings.json`. This keeps your settings, appends to any existing `UserPromptSubmit` hooks and sets `statusLine`:
+
+```sh
+[ -f ~/.claude/settings.json ] || echo '{}' > ~/.claude/settings.json
+jq -s '.[0] as $u | .[1] as $e | $u + {statusLine: $e.statusLine} | .hooks.UserPromptSubmit = (($u.hooks.UserPromptSubmit // []) + $e.hooks.UserPromptSubmit)' ~/.claude/settings.json claude-skills/hooks/settings.example.json > ~/.claude/settings.json.new && mv ~/.claude/settings.json.new ~/.claude/settings.json
+```
+
 Test the hook without Claude Code:
 
 ```sh
 echo '{"session_id":"t","prompt":"seedance prompt","cwd":"/tmp"}' | bash claude-skills/hooks/harness-reminder.sh
+rm -f "${TMPDIR:-/tmp}/claude-harness-reminder-t"
 ```
 
-Set `HARNESS_KEYWORDS` and `HARNESS_TEXT` in the environment to reuse the hook for another rule set.
+Set `HARNESS_KEYWORDS` and `HARNESS_TEXT` in the environment to reuse the hook for another rule set. The default reminder text references the `seedance` skill, which is not included; set `HARNESS_TEXT` to your own rules.
 
 Start a loop in a project: copy `harness/LOOP-TEMPLATE.md` to `LOOP.md` in the project root, fill RULES and the stage table, then ask Claude Code to "open LOOP.md and continue the loop".
 
@@ -108,7 +116,7 @@ Run a workflow example: pass the file content to the Workflow tool as `script` w
 Validate the package:
 
 ```sh
-bash tools/check.sh
+bash claude-skills/tools/check.sh
 ```
 
 ## Status
