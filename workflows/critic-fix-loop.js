@@ -2,7 +2,7 @@ export const meta = {
   name: 'critic-fix-loop',
   description: 'Parallel critics with different jobs find issues, one fixer applies them, repeat up to N rounds until the critics return nothing',
   whenToUse: 'After a build or a rewrite, when "done" needs to mean that independent reviewers found nothing left',
-  phases: [{ title: 'Verify', detail: 'critics then fixer, up to N rounds' }],
+  phases: [{ title: 'Verify', detail: 'critics then fixer, up to N rounds, then a check pass' }],
 }
 
 // Pattern: critic/fix loop.
@@ -11,8 +11,10 @@ export const meta = {
 // - Critics return a schema, so issues from all critics merge in plain code.
 // - Round 1 keeps every severity. Later rounds drop "minor", otherwise the
 //   loop keeps finding new nits and never converges.
-// - The loop stops on the first round with zero issues or after MAX_ROUNDS,
-//   and returns what is left so the orchestrator can decide.
+// - The loop stops on the first round with zero issues or after MAX_ROUNDS.
+//   The last fix is then checked by one more critic pass without a fix, so
+//   `remaining` is what the critics still find, not what was handed to the
+//   last fixer.
 //
 // args: { target: '<dir or repo>', rules: '<rules text>', critics: ['...'], maxRounds: 2 }
 
@@ -30,18 +32,27 @@ const CRITICS = args?.critics ?? [
   `Technical audit of ${T}: console errors, 404s, page weight, lazy loading, keyboard navigation and visible focus, aria roles and states, reduced motion.`,
 ]
 
+async function critique(r) {
+  const crit = await parallel(CRITICS.map((c, i) => () =>
+    agent(`${RULES}\n\n${c}\nReturn only real issues, each with an exact fix.`, { label: `critic${i + 1}:r${r}`, phase: 'Verify', schema: CRIT })))
+  return crit.filter(Boolean).flatMap(c => c.issues).filter(i => r === 1 || i.severity !== 'minor')
+}
+
 phase('Verify')
 let round = 0, last = [], history = []
 while (round < MAX_ROUNDS) {
   round++
-  const crit = await parallel(CRITICS.map((c, i) => () =>
-    agent(`${RULES}\n\n${c}\nReturn only real issues, each with an exact fix.`, { label: `critic${i + 1}:r${round}`, phase: 'Verify', schema: CRIT })))
-  const issues = crit.filter(Boolean).flatMap(c => c.issues).filter(i => round === 1 || i.severity !== 'minor')
+  const issues = await critique(round)
   last = issues
   history.push({ round, issues: issues.length, blockers: issues.filter(i => i.severity === 'blocker').length })
   log(`Round ${round}: ${issues.length} issues`)
   if (!issues.length) break
   await agent(`${RULES}\n\nFix these issues in ${T}. Verify each fix the same way the critic found it (screenshot you look at, curl, test run). Commit "fixes round ${round}".\nIssues: ${JSON.stringify(issues).slice(0, 15000)}`, { label: `fix:r${round}`, phase: 'Verify' })
 }
-if (last.length) log(`Stopped after ${round} rounds with ${last.length} issues left`)
+if (last.length) {
+  // The loop ended on a fix: check it once more, without fixing.
+  last = await critique(round + 1)
+  history.push({ round: round + 1, checkOnly: true, issues: last.length, blockers: last.filter(i => i.severity === 'blocker').length })
+  if (last.length) log(`Stopped after ${round} rounds with ${last.length} issues left`)
+}
 return { rounds: history, remaining: last }

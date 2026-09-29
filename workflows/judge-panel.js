@@ -7,7 +7,7 @@ export const meta = {
     { title: 'Build', detail: 'two independent directions' },
     { title: 'Judge', detail: 'three lenses score both' },
     { title: 'Synthesize', detail: 'final build from winner plus grafts' },
-    { title: 'Verify', detail: 'critics then fixer, up to 2 rounds' },
+    { title: 'Verify', detail: 'critics then fixer, up to 2 rounds, then a check pass' },
   ],
 }
 
@@ -95,14 +95,20 @@ const CRITICS = [
   `Screenshot ${P}/site at 390x844, 768x1024, 1440x900, 1920x1080, full page. Look at every image. Flag overflow, overlap, cropped or blurry images, misalignment, and breaks of the design language.`,
   `Tech audit of ${P}/site: console errors, 404s, total and per-image bytes, lazy loading, width/height on images, keyboard navigation with visible focus, aria states, reduced motion, meta tags, favicon, no external runtime requests.`,
 ]
+async function critique(r) {
+  const crit = await parallel(CRITICS.map((c, i) => () => agent(`${RULES}\n\n${c}\nReturn only real issues with exact fixes.`, { label: `critic${i + 1}:r${r}`, phase: 'Verify', schema: CRIT_SCHEMA })))
+  return crit.filter(Boolean).flatMap(c => c.issues).filter(i => r === 1 || i.severity !== 'minor')
+}
 let round = 0, lastIssues = []
 while (round < 2) {
   round++
-  const crit = await parallel(CRITICS.map((c, i) => () => agent(`${RULES}\n\n${c}\nReturn only real issues with exact fixes.`, { label: `critic${i + 1}:r${round}`, phase: 'Verify', schema: CRIT_SCHEMA })))
-  const issues = crit.filter(Boolean).flatMap(c => c.issues).filter(i => round === 1 || i.severity !== 'minor')
+  const issues = await critique(round)
   lastIssues = issues
   log(`Round ${round}: ${issues.length} issues`)
   if (!issues.length) break
   await agent(`${RULES}\n\nFix these issues in ${P}/site, verify each with screenshots you look at, commit "fixes round ${round}".\nIssues: ${JSON.stringify(issues).slice(0, 15000)}`, { label: `fix:r${round}`, phase: 'Verify' })
 }
+// The loop ended on a fix: check it once more, without fixing, so
+// remainingIssues is what the critics still find.
+if (lastIssues.length) lastIssues = await critique(round + 1)
 return { spec, builds: ok.map(b => ({ folder: b.folder, weight: b.page_weight_kb })), total, winner, verdicts: vs, synth, remainingIssues: lastIssues }
