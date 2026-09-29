@@ -2,7 +2,7 @@
 
 Claude Code skills, hooks and multi-agent workflow scripts for running Claude Code as an orchestrator of subagents.
 
-The package shows how I work with Claude Code on long projects: the main session plans, briefs and accepts, and subagents write the code. It is for engineers who run Claude Code on multi-day work and want a tested structure for loops, agent briefs, acceptance and generative media pipelines.
+The package shows how I work with Claude Code on long projects: the main session plans, briefs and accepts, and subagents write the code. It is for engineers who run Claude Code on multi-day work and want a working structure for loops, agent briefs, acceptance and generative media pipelines.
 
 ```mermaid
 flowchart LR
@@ -21,7 +21,7 @@ flowchart LR
 
 | Part | Files | What it is |
 |---|---|---|
-| `skills/ai-visual` | 6 docs, 600 lines | Creative direction for photoreal AI stills and video on Higgsfield: a 6-slot lighting formula, anti-plastic doctrine, model routing with measured credit costs per second for 11 video models, continuity through canonical reference frames, a client workflow with sign-off gates. |
+| `skills/ai-visual` | 6 docs, 603 lines | Creative direction for photoreal AI stills and video on Higgsfield: a 6-slot lighting formula, anti-plastic doctrine, model routing with measured credit costs per second for 12 video models across two measurement rounds, continuity through canonical reference frames, a client workflow with sign-off gates. |
 | `skills/palmier-edit` | 2 docs | Timeline assembly through the Palmier MCP server: frame math, cadence grid, dissolves, ID handling rules. |
 | `skills/ai-visual-start` | 1 doc | Session start for the visual workflow: load skills, start the storyboard tool, a 4-question intake, then branch into new campaign, client order or continue. |
 | `skills/orchestrator-loop` | 1 doc | The loop: contract, briefs by file ownership, acceptance by diff + tests + curl, stop conditions. |
@@ -31,7 +31,7 @@ flowchart LR
 | `harness/AGENT-BRIEF-TEMPLATE.md` | template | A subagent brief with owned files, acceptance line, verify commands and report format. |
 | `harness/notes/figma-mcp-gotchas.md` | notes | Figma MCP mechanics: limits, geometry, text sizing traps, reliability. |
 | `hooks/` | 2 scripts, 1 config | A sticky `UserPromptSubmit` reminder hook and a status line. |
-| `workflows/` | 5 scripts, 361 lines | Workflow tool scripts: read-only triage, fix/verify/fix, judge panel, critic/fix loop, adversarial leak hunt. See `workflows/README.md`. |
+| `workflows/` | 5 scripts, 378 lines | Workflow tool scripts: read-only triage, fix/verify/fix, judge panel, critic/fix loop, adversarial leak hunt. See `workflows/README.md`. |
 
 The skills in `skills/ai-visual`, `skills/palmier-edit` and `skills/ai-visual-start` are working artifacts in Russian. Everything else is in English.
 
