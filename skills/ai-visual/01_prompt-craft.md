@@ -4,7 +4,7 @@
 
 Порядок приоритетов внутри этого принципа: **свет -> носитель -> конкретика -> сдержанность.** Свет закрывается первым и отдельным слотом (раздел ниже), всё остальное кладётся поверх него.
 
-## Свет - первый слот ( главное правило кадра)
+## Свет - первый слот (главное правило кадра)
 
 **Сначала попадаем светом, потом всё остальное.** Кадр с точной светосхемой и средним гардеробом читается как фотография; кадр с идеальным гардеробом и «просто светло» - как рендер. Свет - не прилагательное к сцене, а **отдельный обязательный слот промпта**, который закрывается первым.
 
@@ -91,7 +91,7 @@
 `Cinematic film still, frame grab from a high-fashion art film. <субъект+характер+гардероб+живой элемент>. <локация: bare concrete hall>, <СВЕТ по формуле: a hard shaft of daylight from a high side window, key-to-fill about 4:1, deep falloff into shadow>, dust in the air, <эмоция>. Anamorphic widescreen, desaturated cinematic grade, 35mm motion-picture grain, shallow focus on the face, photorealistic, the uncanny illusion of living <материал>, a held movie frame.`
 Свет - по формуле из «Свет - первый слот», все шесть слотов, а не одним словом. Негативы по месту: `no camera flash`, `no people`.
 
-### C. COUTURE-MATERIAL ( ключ к разгадке пластика/слопа)
+### C. COUTURE-MATERIAL (ключ к разгадке пластика/слопа)
 Это формула «живой одежды» (кампания SECOND NATURE: камень/бумага/медь/фарфор, сквозь которые лезет мох/цветы/verdigris/ростки).
 
 **ПРАВИЛО:** материал = СКОНСТРУИРОВАННЫЙ couture-наряд на стилизованной модели - плиты внахлёст, швы/строчка, воротники, структурные плечи. Снимать как фэшн-портрет, **фокус на ЛИЦЕ**. Разная модель под каждый материал. `wearing a garment that looks exactly like X` - ПРАВИЛЬНО (она про ТКАНЬ наряда).
@@ -103,7 +103,7 @@
 | материал как АБСТРАКТНАЯ ТЕКСТУРА (макро-swatch, плитка) | 3D-рендер-слоп |
 | убрали модель/крой/лицо («no person, surface fills frame») | потеря фэшн-реальности и масштаба |
 
-Эталон-портрет (Пользователь одобрил): `Cinematic film still, frame grab from a high-fashion art film. A striking androgynous person with a shaved head and weathered noble features, mid-40s, wearing a sculptural garment that looks exactly like cracked grey weathered stone, emerald-green moss creeping across the surface of the fabric. Bare concrete hall, a hard shaft of daylight, dust in the air, calm composed expression. Anamorphic widescreen, desaturated cinematic grade, 35mm motion-picture grain, shallow focus on the face, photorealistic, the uncanny illusion of living stone, a held movie frame.`
+Эталон-портрет (пользователь одобрил): `Cinematic film still, frame grab from a high-fashion art film. A striking androgynous person with a shaved head and weathered noble features, mid-40s, wearing a sculptural garment that looks exactly like cracked grey weathered stone, emerald-green moss creeping across the surface of the fabric. Bare concrete hall, a hard shaft of daylight, dust in the air, calm composed expression. Anamorphic widescreen, desaturated cinematic grade, 35mm motion-picture grain, shallow focus on the face, photorealistic, the uncanny illusion of living stone, a held movie frame.`
 
 ## Детали-вставки (макро-моменты БЕЗ слопа)
 
