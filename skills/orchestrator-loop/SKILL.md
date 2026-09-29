@@ -10,12 +10,12 @@ The main session holds the contract, the acceptance and the integration. Subagen
 ## Start
 
 1. If `LOOP.md` exists: read RULES, State, Questions and the tail of Journal, then go to Iteration.
-2. If not: create it from `harness/LOOP-TEMPLATE.md` in this package. Fill RULES first, then the stage table from the spec. Commit it.
+2. If not: create it from `LOOP-TEMPLATE.md` next to this SKILL.md. Fill RULES first, then the stage table from the spec. Commit it.
 
 ## Iteration
 
 1. Pick the next stage. Write its contract: files, interfaces, one-line acceptance criterion.
-2. Split it by file ownership. Brief each agent with `harness/AGENT-BRIEF-TEMPLATE.md`. Cheaper model for typical pieces, stronger model for hard logic. Run independent pieces in parallel.
+2. Split it by file ownership. Brief each agent with `AGENT-BRIEF-TEMPLATE.md` next to this SKILL.md. Cheaper model for typical pieces, stronger model for hard logic. Run independent pieces in parallel.
 3. Accept with your own eyes: read the diff, run the tests, curl the endpoints, open the UI. An agent's "it works" does not count.
 4. A failed piece goes to a fresh agent with the fix written into the brief.
 5. Commit, snapshot the target, deploy, check health.
@@ -36,4 +36,4 @@ The main session holds the contract, the acceptance and the integration. Subagen
 - NEVER expand scope; unknowns go to "Questions".
 - ALWAYS commit before overwriting anything, and snapshot before every deploy.
 - ALWAYS write the loop's hard rules into each agent brief; agents do not inherit them.
-- For multi-agent patterns (judge panel, critic/fix loop, adversarial verify) see `workflows/` in this package.
+- For multi-agent patterns (judge panel, critic/fix loop, adversarial verify) see `workflows/` in the claude-skills repo.

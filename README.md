@@ -83,6 +83,7 @@ Install the skills for your user:
 git clone <this repo> claude-skills
 mkdir -p ~/.claude/skills
 cp -R claude-skills/skills/* ~/.claude/skills/
+cp claude-skills/harness/LOOP-TEMPLATE.md claude-skills/harness/AGENT-BRIEF-TEMPLATE.md ~/.claude/skills/orchestrator-loop/
 ```
 
 Install the hooks, then merge `hooks/settings.example.json` into `~/.claude/settings.json` (both need `jq`):
